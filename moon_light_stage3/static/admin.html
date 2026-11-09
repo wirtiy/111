@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Moon Light — Админ-панель</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#10111b;color:#eee;font:15px Arial,sans-serif}main{max-width:1100px;margin:36px auto;padding:20px}.panel{background:#1b1d2b;border:1px solid #33364a;border-radius:16px;padding:20px;margin:14px 0}h1,h2{color:#d9c5ff}input,button{padding:11px;border-radius:8px;border:1px solid #555;background:#25283a;color:#fff;margin:5px}button{background:#7655b5;cursor:pointer}button:hover{background:#8969c9}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}.stat{background:#27283c;padding:16px;border-radius:10px}.stat b{font-size:26px;display:block;color:#d9c5ff}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#11131d;padding:14px;border-radius:8px;max-height:380px;overflow:auto}.muted{color:#aaa}#app{display:none}
+</style></head><body><main><h1>☾ Moon Light · Администрирование</h1>
+<section id="login" class="panel"><h2>Вход администратора</h2><p class="muted">Демо-доступ после первого запуска: admin@moonlight.local / MoonLight2026!</p>
+<input id="email" value="admin@moonlight.local" placeholder="Email"><input id="password" type="password" value="MoonLight2026!" placeholder="Пароль"><button onclick="login()">Войти</button><p id="err"></p></section>
+<section id="app"><div class="panel"><button onclick="loadAll()">Обновить данные</button><button onclick="logout()">Выйти</button> <a href="/" style="color:#d9c5ff">Открыть сайт</a><div id="stats" class="grid"></div></div>
+<div class="panel"><h2>Бронирования</h2><pre id="bookings">Загрузка…</pre></div>
+<div class="panel"><h2>Сообщения</h2><pre id="messages">Загрузка…</pre></div>
+<div class="panel"><h2>Номера</h2><pre id="rooms">Загрузка…</pre><h3>Добавить номер</h3><input id="rname" placeholder="Название"><input id="rprice" type="number" placeholder="Цена за ночь"><input id="rcap" type="number" placeholder="Вместимость"><input id="rqty" type="number" placeholder="Количество"><button onclick="addRoom()">Добавить</button></div>
+<div class="panel"><h2>Отзывы на модерации</h2><pre id="reviews">Загрузка…</pre></div>
+<div class="panel"><h2>Пользователи</h2><pre id="users">Загрузка…</pre></div>
+<div class="panel"><h2>Журнал действий</h2><pre id="audit">Загрузка…</pre></div></section></main>
+<script>
+let token=localStorage.getItem('ml_admin_token')||'';
+async function api(path,opts={}){let r=await fetch('/api'+path,{...opts,headers:{'Content-Type':'application/json','Authorization':'Bearer '+token,...opts.headers}});let d=await r.json();if(!r.ok)throw Error(d.error||'Ошибка');return d}
+async function login(){try{let d=await api('/login',{method:'POST',body:JSON.stringify({email:email.value,password:password.value})});token=d.token;localStorage.setItem('ml_admin_token',token);document.querySelector('#login').style.display='none';document.querySelector('#app').style.display='block';loadAll()}catch(e){err.textContent=e.message}}
+async function logout(){try{await api('/logout',{method:'POST',body:'{}'})}catch(e){}localStorage.removeItem('ml_admin_token');location.reload()}
+async function loadAll(){try{let [s,b,m,r,v,u,a]=await Promise.all(['/stats','/bookings','/messages','/rooms','/reviews/all','/users','/audit'].map(x=>api(x)));stats.innerHTML=Object.entries(s).map(([k,v])=>`<div class="stat">${k.replaceAll('_',' ')}<b>${v}</b></div>`).join('');for(let [id,d] of Object.entries({bookings:b.items,messages:m.items,rooms:r.items,reviews:v.items,users:u.items,audit:a.items}))document.getElementById(id).textContent=JSON.stringify(d,null,2)}catch(e){err.textContent=e.message}}
+async function addRoom(){try{await api('/rooms',{method:'POST',body:JSON.stringify({name:rname.value,price:Number(rprice.value),capacity:Number(rcap.value),quantity:Number(rqty.value)})});await loadAll()}catch(e){alert(e.message)}}
+if(token){document.querySelector('#login').style.display='none';document.querySelector('#app').style.display='block';loadAll()}
+</script></body></html>
