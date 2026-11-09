@@ -1,0 +1,2 @@
+Feature branch: feature/profile-security
+See docs/FEATURE_PROFILE_SECURITY.md for scope and test checklist.

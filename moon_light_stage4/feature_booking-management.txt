@@ -1,0 +1,2 @@
+Feature branch: feature/booking-management
+See docs/FEATURE_BOOKING_MANAGEMENT.md for scope and test checklist.

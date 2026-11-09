@@ -1,0 +1,20 @@
+feature/admin-reports
+  feature/booking-management
+  feature/profile-security
+  main
+* web/flask
+
+*   0ab1949 (HEAD -> web/flask) merge: feature/profile-security
+|\  
+| * ceb1f11 (feature/profile-security) docs: define profile security feature
+|/  
+*   129113f merge: feature/admin-reports
+|\  
+| * e9a90b4 (feature/admin-reports) docs: define admin reporting feature
+|/  
+*   e2adddd merge: feature/booking-management
+|\  
+| * 13b1e6a (feature/booking-management) docs: define booking management feature
+|/  
+* 1b53e95 feat: establish Flask web branch
+* 99b5b45 (main) chore: import Moon Light project

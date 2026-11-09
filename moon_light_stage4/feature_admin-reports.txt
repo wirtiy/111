@@ -1,0 +1,2 @@
+Feature branch: feature/admin-reports
+See docs/FEATURE_ADMIN_REPORTS.md for scope and test checklist.
